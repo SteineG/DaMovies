@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/style.css">
+
+        <title>DaMovies</title>
+
+    </head>
+
+    <body>
+
+        <div class="row" id="row-main">
+
+            <!-- MENU -->
+            <div class="col-md-3" id="menu">
+                <div class="sidebar-nav fixed-top">
+                    <div class="navbar" role="navigation">
+
+                        <!-- Menu header -->
+                        <div class="navbar-header">
+                            <span class="menu-header">FILMER</span>    
+                        </div>
+
+                        <!-- Menu options -->
+                        <nav class="navbar-collapse sidebar-navbar-collapse"></nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRID -->
+            <div class="col-md-9 film-grid" id="filmGrid">
+                <div class="row">
+                    <!-- Wrapper for grid -->
+                    <div id="grid-column" class="grid-column"></div>
+                </div>
+            </div>
+
+            <!--- INFORMATION BAR --->
+            <div id="infoBarChevron" class="col-md-2 text-center vertically-middle display-none">
+                <i class="fa fa-chevron-left fa-5x"></i>
+            </div>
+            <div id="infoBar" class="col-md-10 display-none">
+                <div class="container">
+
+                    <!-- Title of movie -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="movie-title"></div>
+                        </div>
+                    </div>
+
+                    <!-- General information -->
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="row mb-3">
+                                
+                                <!-- Length -->
+                                <div class="col-3 mr-5">
+                                    <hr>
+                                    <p class="text-muted">LENGDE</p>
+                                    <div id="movie-length"></div>    
+                                </div>
+                                
+                                <!-- Country -->
+                                <div class="col-3 mr-5">
+                                    <hr>
+                                    <p class="text-muted">LAND</p>
+                                    <div id="movie-country"></div>
+                                </div>
+                                
+                                <!-- Language -->
+                                <div class="col-3 mr-5">
+                                    <hr>
+                                    <p class="text-muted">SPRÅK</p>
+                                    <div id="movie-language"></div>
+                                </div>
+                            </div>
+
+                            <!-- Info image -->
+                            <div class="row mb-4">
+                                <div class="col-9" id="infoImgWrapper"></div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="row">
+                                
+                                <!-- Watch -->
+                                <button id="info-btn1" type="button" class="btn btn-lg selected3 px-4 py-3 ml-3 mr-5">
+                                    <i class="fa fa-play"></i>
+                                    <span>Se nå</span>
+                                </button>
+
+                                <!-- Trailer -->
+                                <button id="info-btn2" type="button" class="btn btn-lg px-4 py-3 mx-5">
+                                    <i class="fa fa-eye"></i>
+                                    <span>Trailer</span>
+                                </button>
+
+                                <!-- Add to list -->
+                                <button id="info-btn3" type="button" class="btn btn-lg px-4 ml-4">
+                                    <i class="fa fa-list-ul"></i> 
+                                    <span>Huskeliste</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div id="descriptionWrapper" class="col-4"></div>
+
+                    </div>
+                </div>    
+            </div>
+        </div><!-- main row -->
+
+
+        <!--- Import scripts --->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/popper.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <!-- Custom script for JSON Request and movie database -->
+        <script src="js/JSON.js" type="text/javascript"></script>
+
+        <!-- Custom JQuery script -->
+        <script src="js/navigation.js"></script>
+        
+    </body>
+</html>
