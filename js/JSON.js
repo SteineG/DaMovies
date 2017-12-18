@@ -1,78 +1,87 @@
-var genreChosen = "";
-var baseUrl = "http://jscase.dev2.sixty.no";
-var indexPath = "/api/index.json";
+//User should enter API key to get access to movie database (not in use atm)
+var apiKey = "615751d0824b26af2c6d0cb583c2a8ae";
 
-var uriArray = [];
-var uriPath = "";
+//Get the list of official genres for movies.
+//https://api.themoviedb.org/3/genre/movie/list?api_key=615751d0824b26af2c6d0cb583c2a8ae&language=en-US
+
+//The base URL will look like: http://image.tmdb.org/t/p/ then you'll need a size let's say w185 then the poster path you got, so this is the final url http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg and this is the docs where you can find out more: http://docs.themoviedb.apiary.io/#reference/account/get?console=1 
+var baseURL = "https://api.themoviedb.org/3";
+
+
+//These are the the sizes of the images: "w92", "w154", "w185", "w342", "w500", "w780", or "original";
+var baseURL_thumbnails = "http://image.tmdb.org/t/p/w342/";
+var baseURL_infoImg = "http://image.tmdb.org/t/p/w780/";
+
+var genreChosen = "";
+var genreIndex = "";
+
+//var indexPath = "/api/index.json";
+
+//var uriArray = [];
+//var uriPath = "";
 
 var genreTitleArray = [];
 
+//Load genres
+$.getJSON( baseURL + "/genre/movie/list?api_key=" + apiKey, function( data ) {
+    var genreArray = [];
+    var arraySize = 10; //I could have used all 19 but i focus on just 5 in this project
 
-//Load movie thumbnails from database
-function loadThumbnails(data) {
-    //First clear the grid
-    $("#grid-column").children("img").remove();
+    //Push each genre to the array
+    for(var i = 0; i < arraySize; i++){
 
-    //Push each movie to the array
-    var arraySize = data.assets.asset.length;
-    for(var i = 1; i <= arraySize; i++){
+        var genreTitle = data.genres[i].name;
 
-        //Get thumbnail from url
-        var imageURLs = data.assets.asset[i].metadata['image-urls'].$;
-        console.log(imageURLs);
-        var temp = new Array();
-        // this will return an array with strings "url1", "url2", etc.
-        temp = imageURLs.split(",");
-        var thumbnail = temp[0];
+        var genreId = data.genres[i].id;
 
-        $("#grid-column").append("<img id=" + i + " src=" + thumbnail + ">");
-        $("#1").toggleClass("selected2");
+        //Only first item should have the class 'selected1'
+        if(i == 0){
+            genreArray.push( "<li class='selected1 selected1-border'><a id=genreIndex-" + i + " href='#'>" + genreTitle + "</a></li>" );
+        } else {
+            genreArray.push( "<li><a id=genreIndex-" + genreId + " href='#'>" + genreTitle + "</a></li>" );
+        }
+
+        //Push all uri paths and title to arrays 
+        //uriArray.push(data.contentPanelElements.contentPanelElement[i]['@uri']);
+        //genreTitleArray.push(data.contentPanelElements.contentPanelElement[i].title);
     }
-}
 
-//Appending different information in infobar
-function appendInfo(data){
-    //Get id of movie clicked
-    var movieClicked = selected2.attr('id');
+    //Append array to div
+    $( "<ul/>", {
+        "class": "nav navbar-nav",
+        html: genreArray.join( "" )
+    }).appendTo( "nav" );
+});
 
-    //Title
-    var title = data.assets.asset[movieClicked].metadata.title[1].$;
-    var year = data.assets.asset[movieClicked].metadata['production-year'].$;
-    $("#movie-title").append("<h1 class='display-4 mb-2'>" + title + " (" + year + ")</h1>");
 
-    //Length
-    var length = data.assets.asset[movieClicked].metadata['asset-length'].$;
-    var hours = parseInt(length / 60);
-    var min = parseInt(length % 60);
-    $("#movie-length").append("<p>" + hours + " t " + min + " min </p>");
+//Get thumbnails from the respective genre
+function getThumbnails(index) {
 
-    //Country
-    var countries = data.assets.asset[movieClicked].metadata['production-country'].$;
-    //Show only the main country
-    var tempCountryArray = new Array();
-    tempCountryArray = countries.split(",");
-    var country = tempCountryArray[0];
-    $("#movie-country").append("<p>" + country + "</p>");
+    genreIndex = index.split("-")[1];
+    //uriPath = uriArray[genreIndex];
+    genreChosen = genreTitleArray[genreIndex];
 
-    //Language
-    var languages = data.assets.asset[movieClicked].metadata['spoken-languages'].$;
-    //Show only the main language
-    var tempLanguageArray = new Array();
-    tempLanguageArray = languages.split(",");
-    var language = tempLanguageArray[0];
-    $("#movie-language").append("<p>" + language + "</p>");
+    //Load the thumbnails
+    $.getJSON( baseURL + "/discover/movie?api_key=" + apiKey + "&sort_by=popularity.desc&page=1&with_genres=" + genreIndex, function( data ) {
+        
+        //First clear the grid
+        $("#grid-column").children("img").remove();
 
-    //Info picture
-    var imageURLs = data.assets.asset[movieClicked].metadata['image-urls'].$;
-    var tempImgArray = new Array();
-    // this will return an array with separated urls
-    tempImgArray = imageURLs.split(",");
-    var infoImg = tempImgArray[2];
-    $("#infoImgWrapper").append("<img id='infoImg' src=" + infoImg + ">");
+        //Push each movie to the array
+        var arraySize = data.results.length;
+        for(var i = 1; i <= arraySize; i++){
 
-    //Description
-    var description = data.assets.asset[movieClicked].metadata.synopsis[3].$;
-    $("#descriptionWrapper").append("<textarea id='description'>" + description + "</textarea>");
+            //Get thumbnail from url
+            var imagePath = data.results[i].poster_path;
+            var imageID = data.results[i].id;
+
+            var imageURL = baseURL_thumbnails + imagePath;
+            console.log(imageURL);
+
+            $("#grid-column").append("<img id=" + i + " src=" + imageURL + " data="+ imageID +">");
+            $("#1").toggleClass("selected2");
+        }
+    });
 }
 
 //Clear all info fields
@@ -85,53 +94,49 @@ function clearInfoFields(){
     $("#descriptionWrapper").children("textarea").remove();
 }
 
-//Load genres
-$.getJSON( baseUrl + indexPath, function( data ) {
-    var genres = [];
-    var arraySize = data.contentPanelElements.contentPanelElement.length;
-
-    //Push each genre to the array
-    for(var i = 0; i < arraySize; i++){
-
-        var genreTitle = data.contentPanelElements.contentPanelElement[i].title;
-        //Only first item should have the class 'selected1'
-        if(i == 0){
-            genres.push( "<li class='selected1 selected1-border'><a id=genreIndex-" + i + " href='#'>" + genreTitle + "</a></li>" );
-        } else {
-            genres.push( "<li><a id=genreIndex-" + i + " href='#'>" + genreTitle + "</a></li>" );
-        }
-
-        //Push all uri paths and title to arrays
-        uriArray.push(data.contentPanelElements.contentPanelElement[i]['@uri']);
-        genreTitleArray.push(data.contentPanelElements.contentPanelElement[i].title);
-    }
-
-    //Append array to div
-    $( "<ul/>", {
-        "class": "nav navbar-nav",
-        html: genres.join( "" )
-    }).appendTo( "nav" );
-});
-
-//Get thumbnails from the respective genre
-function getThumbnails(index) {
-
-    var genreIndex = index.split("-")[1];
-    uriPath = uriArray[genreIndex];
-    genreChosen = genreTitleArray[genreIndex];
-
-    $.getJSON( baseUrl + uriPath, function( data ) {
-        genreChosen = "action";
-        loadThumbnails(data);
-    });
-}
-
 //Get info about the choosen movie
 function getMovieInfo() {
 
     clearInfoFields();
 
-    $.getJSON( baseUrl + uriPath, function( data ) {
-        appendInfo(data);
+    //Get id of movie clicked
+    var movieClicked = selected2.attr('data');
+
+    $.getJSON( baseURL + "/movie/"+ movieClicked +"?api_key=" + apiKey, function( data ) {
+
+        //Title and year
+        var title = data.title;
+        var year = data.release_date;
+        var tempDateArray = new Array();
+        tempDateArray = year.split("-");
+        year = tempDateArray[0];
+        $("#movie-title").append("<h1 class='display-4 mb-2'>" + title + " (" + year + ")</h1>");
+
+        //Length
+        var length = data.runtime;
+        var hours = parseInt(length / 60);
+        var min = parseInt(length % 60);
+        $("#movie-length").append("<p>" + hours + "t " + min + "min</p>");
+
+        //Show only the main country
+        //var tempCountryArray = new Array();
+        //tempCountryArray = countries.split(",");
+        var country = data.production_countries[0].name;
+        $("#movie-country").append("<p>" + country + "</p>");
+
+        //Rating
+        var rating = data.vote_average;
+        var ratingText = "";
+        if (rating > 8.4) { ratingText = "Masterpiece" } else if (rating > 8.0) { ratingText = "Exceptional" } else if (rating > 7.0) { ratingText = "Great" } else if (rating > 6.0) { ratingText = "Enjoyable" } else if (rating > 5.0) { ratingText = "Unpleasant" } else { ratingText = "Horrible" }  
+        $("#movie-language").append("<p>" + rating + " (" + ratingText + ")</p>");
+
+        //Info picture
+        var infoImgPath = data.backdrop_path;
+        var infoImg = baseURL_infoImg + infoImgPath;
+        $("#infoImgWrapper").append("<img id='infoImg' src=" + infoImg + ">");
+
+        //Description
+        var description = data.overview;
+        $("#descriptionWrapper").append("<textarea id='description'>" + description + "</textarea>");
     });
 }

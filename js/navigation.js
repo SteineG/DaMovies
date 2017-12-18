@@ -91,6 +91,7 @@ $(document).keydown(function(e) {
 
                 navIndex = 2;
             }
+
             break;
 
 
@@ -99,7 +100,7 @@ $(document).keydown(function(e) {
 
             //Menu
             if(navIndex == 0){
-                alert("You can not go more left!");
+                //alert("You can not go more left!");
             }
 
             //Movie grid
@@ -133,7 +134,7 @@ $(document).keydown(function(e) {
 
                 selected3 = $(".selected3");
 
-                /* If user is to the left in info bar, user can go back to movie grid by  pressing left */
+                // If user is to the left in info bar, user can go back to movie grid by  pressing left
                 var id = selected3.attr('id');
                 if(id == "info-btn1"){
 
